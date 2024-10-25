@@ -359,7 +359,6 @@ async def profile():
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
 
-    # Получаем информацию о сегодняшних подяках
     data = await get_todays_gratitudes(user_id)
     if data is None:
         flash('Користувача не знайдено!')
@@ -367,16 +366,13 @@ async def profile():
 
     todays_gratitudes, user = data
 
-    # Получаем количество друзей пользователя
     async with BaseEngine.async_session() as db_session:
-        # Подсчет друзей
         friends_count = await db_session.scalar(
             select(func.count())
             .select_from(Friendship)
             .filter_by(user_id=user_id)
         )
 
-        # Подсчет созданных подяк
         gratitudes_count = await db_session.scalar(
             select(func.count())
             .select_from(Gratitude)
@@ -488,12 +484,15 @@ async def delete_friend(friend_id):
 
         return jsonify({'error': 'Friend not found'}), 404
     
-
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id', None)
-    flash('Ви успішно вийшли з акаунту!', 'info')
+    user_id = session.pop('user_id', None)  
+    if user_id is not None:
+        flash('Ви успішно вийшли з акаунту!', 'info')
+    else:
+        flash('Ви вже вийшли з акаунту.', 'info')
     return redirect(url_for('login_view'))
+
 
 @app.route('/delete_gratitude/<int:gratitude_id>', methods=['POST'])
 async def delete_gratitude(gratitude_id):

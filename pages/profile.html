@@ -6,13 +6,17 @@
 <section class="profile">
 
     <div class="left-side">
-        
+
         <div class="profile-header">
             <h1 class="profile-header-text">Профіль</h1>
             <div class="profile-header-content">
+                <img src="{{ url_for('static', filename='imagesforcss/profile-image.jpg') }}" alt=""
+                    class="profile_img_big">
                 <h2 class="profile-header-name">{{ user.first_name }} {{ user.last_name }}</h2>
-                <p class="profile-header-username">{{ user.login }}</p>
-                <button class="edit-profile" id="editProfileButton">Змінити профіль</button>
+                <p class="profile-header-username"><span>@</span>{{ user.login }}</p>
+                <div class="profile-buttons">
+                    <button class="edit-profile passive" id="editProfileButton">Змінити профіль</button>
+                </div>
 
             </div>
         </div>
@@ -22,11 +26,12 @@
         <div class="info-about-user">
             <h2 class="h2-info-user">Інформація про користувача</h2>
             <div class="text-about-user">
-                <p>Кількість друзів: {{ friends_count }}</p>
-                <p>Кількість подяк: {{ gratitudes_count }}</p>
+                <p>Вдячностей: {{ gratitudes_count }}</p>
+                <p>Друзів: {{ friends_count }}</p>
+
             </div>
         </div>
-        
+
         <div class="profile-user-content">
             <div class="profile-daily-gratitude">
                 <h2 class="daily-gratitude-title">Подяки дня</h2>
@@ -42,51 +47,58 @@
                 {% endif %}
             </div>
         </div>
-        
-        
-        
-        
+
+
+
+
     </div>
 
     <div id="editProfileModal" class="modal-edit">
         <div class="modal-edit-content">
-          <span class="close">&times;</span>
-          <form method="POST" action="{{ url_for('edit_profile') }}">
-              <label for="current_password">Поточний пароль*:</label>
-              <input class="input-modal-edit" type="password" name="current_password" required>
-              <br><br>
-          
-              <label for="first_name">Ім'я :</label>
-              <input class="input-modal-edit" name="first_name" value="{{ user.first_name }}">
-              <br><br>
-          
-              <label for="last_name">Прізвище:</label>
-              <input class="input-modal-edit" name="last_name" value="{{ user.last_name }}">
-              <br><br>
-          
-              <label for="login">Логін:</label>
-              <input class="input-modal-edit" name="login" value="{{ user.login }}">
-              <br><br>
-          
-              <label for="email">Пошта:</label>
-              <input class="input-modal-edit" name="email" value="{{ user.email }}">
-              <br><br>
-          
-              <label for="password">Новий пароль (якщо змінюється):</label>
-              <input class="input-modal-edit" type="password" name="password">
-              <br><br>
-          
-              <label for="confirm_password">Підтвердіть новий пароль:</label>
-              <input class="input-modal-edit" type="password" name="confirm_password">
-              <br><br>
-          
-              <button class="submit-edit" type="submit">Зберегти зміни</button>
-              
-          </form>
-          <form method="POST" action="{{ url_for('logout') }}" style="display: inline;">
-              <button type="submit" class="logout-button">Вийти з акаунту</button>
-          </form>
-          
+            <span class="close">&times;</span>
+            <form method="POST" action="{{ url_for('edit_profile') }}" class="form-edit">
+                <label for="current_password">Поточний пароль*:</label>
+                <input class="input-modal-edit" type="password" name="current_password" required>
+
+                <div class="modal-edit-names">
+                    <div class="modal-edit-input">
+                        <label for="first_name">Ім'я :</label>
+                        <input class="input-modal-edit" name="first_name" value="{{ user.first_name }}">
+                    </div>
+                    <div class="modal-edit-input">
+                        <label for="last_name">Прізвище:</label>
+                        <input class="input-modal-edit" name="last_name" value="{{ user.last_name }}">
+                    </div>
+                </div>
+
+                <div class="modal-edit-names">
+                    <div class="modal-edit-input">
+                        <label for="login">Логін:</label>
+                        <input class="input-modal-edit" name="login" value="{{ user.login }}">
+                    </div>
+
+                    <div class="modal-edit-input">
+                        <label for="email">Пошта:</label>
+                        <input class="input-modal-edit" name="email" value="{{ user.email }}">
+                    </div>
+                </div>
+
+                <label for="password">Новий пароль (якщо змінюється):</label>
+                <input class="input-modal-edit" type="password" name="password">
+
+                <label for="confirm_password">Підтвердіть новий пароль:</label>
+                <input class="input-modal-edit" type="password" name="confirm_password">
+
+                <button class="submit-edit" type="submit">Зберегти зміни</button>
+
+                
+                
+            </form>
+            <form method="POST" action="{{ url_for('logout') }}" style="display: inline;">
+                <button type="submit" class="leave-btn">Вийти з профілю</button>
+            </form>
+            
+
         </div>
 
     </div>

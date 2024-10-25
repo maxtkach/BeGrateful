@@ -12,11 +12,6 @@
 <section class="global">  
     <h1 class="globel-title">За що вдячен світ</h1>
 
-    <!-- Add a toggle for gratitude types -->
-    <!--<div class="gratitude-toggle">
-        <button onclick="location.href='{{ url_for('global_gratitudes') }}'">Глобальні Подяки</button>
-        <button onclick="location.href='{{ url_for('friends_gratitudes') }}'">Подяки Друзів</button>
-    </div> -->
 
     {% if gratitudes %}
         {% for gratitude in gratitudes %}

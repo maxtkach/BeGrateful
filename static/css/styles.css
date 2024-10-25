@@ -403,11 +403,13 @@ li {
   font-size: 36px;
   font-weight: bold;
   margin: 0;
+  color: #000;
 }
 
 .profile-header-name, .profile-header-username {
   text-align: center;
   margin: 0;
+  color: #000;
 }
 
 .profile-header-name {
@@ -430,6 +432,17 @@ li {
   height: 100%; 
   margin: 0; 
   padding-top: 100px; 
+  margin-left: 30px;
+}
+
+.profile_img_big{
+  width: 130px;
+  height: 130px;
+  border-radius:100px;
+}
+
+.profile-buttons{
+  margin-top: 20px;
 }
 
 
@@ -441,6 +454,7 @@ li {
   margin: 0;
 }
 .profile-header-username {
+  font-weight: 200;
 }
 .add-friend {
   margin: 30px;
@@ -454,14 +468,20 @@ li {
 }
 
 .edit-profile {
-  margin: 30px;
   padding-inline: 23px;
   padding-block: 18px;
   border: none;
-  background-color: #F0F0F0;
   border-radius: 15px;
   width: 240px;
+  height: 70px;
+  background-color: #698BFF;
+  color: #fff;
+  cursor: pointer;
   font-size: 24px;
+}
+
+.edit-profile.passive{
+  background-color: #A9BCFF !important;
 }
 
 .edit- {
@@ -541,6 +561,7 @@ li {
   margin-top: 27px; 
   margin-bottom: 7px; 
   font-family: 'Manrope';
+  padding-left: 20px;
 
 }
 
@@ -565,12 +586,29 @@ li {
 
 }
 
+.form-edit{
+  display: flex;
+  padding-inline: 20px;
+  padding-block: 20px;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-edit label{
+  font-size: 20px;
+}
+
+.text-about-user p{
+  padding-inline: 20px;
+  padding-block: 10px;
+}
+
 .modal-edit {
   font-family: 'Manrope';
   display: none; 
   position: fixed; 
   z-index: 10; 
-  padding-top: 100px; 
+  padding-top: 20px;
   left: 0;
   top: 0;
   width: 100%; 
@@ -593,25 +631,54 @@ li {
   border-radius: 14px;
   box-sizing: border-box;
   background-color: #EFF3FF;
-  height: 56px;
+  height: 50px;
   box-shadow: 5px 6px 0px #C1CFFF;
-  width: 80%;
+  width: 400px;
   font-size: 20px;
   font-family: 'Manrope', sans-serif;
   padding-left: 1rem;
 }
 
+.modal-edit-names{
+  display: flex;
+  flex-direction: row;
+}
+
+.modal-edit-input{
+  display: flex;
+  flex-direction: column;
+  margin-right: 30px;
+}
+
 .submit-edit {
   background-color: #BDCCFF;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-left: 70px;
-  padding: 15px 30px;
-  font-size: 18px;
-  width: 200px;
-  height: 60px; 
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    padding: 15px 30px;
+    font-size: 18px;
+    width: 300px;
+    height: 70px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    margin-top: 20px;
+}
+
+.leave-btn{
+  background-color: white;
+    color: red;
+    border: solid 2px red;
+    border-radius: 12px;
+    cursor: pointer;
+    padding: 15px 30px;
+    font-size: 18px;
+    width: 300px;
+    height: 70px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1.5px;
 }
 
 .toggle-buttons {
