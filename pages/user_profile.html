@@ -1,49 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Профіль користувача {{ user.login }}{% endblock %}
+{% block title %}Профіль{% endblock %}
 
 {% block content %}
 <section class="profile">
-    <div class="profile-header">
-        <h1 class="profile-header-text">Профіль користувача</h1>
-        <div class="profile-header-content">
-            <h2 class="profile-header-name">{{ user.first_name }} {{ user.last_name }}</h2>
-            <p class="profile-header-username">{{ user.login }}</p>
+
+    <div class="left-side">
+        <div class="profile-header">
+            <h1 class="profile-header-text">Профіль</h1>
+            <div class="profile-header-content">
+                <img src="{{ url_for('static', filename='imagesforcss/profile-image.jpg') }}" alt="" class="profile_img_big">
+                <h2 class="profile-header-name">{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="profile-header-username"><span>@</span>{{ user.login }}</p>
+                <div class="profile-buttons">
+                    {% if is_friend %}
+                    <button class="btn btn-add-friend" disabled>Вже друзі</button>
+                {% else %}
+                    <form method="POST" action="{{ url_for('user_profile', user_id=user.id) }}">
+                        <button type="submit" class="btn btn-add-friend">Додати в друзі</button>
+                    </form>
+                {% endif %}
+                
+
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="profile-user-content">
-
-    <form method="POST" action="">
-        <button class="add-friend">Додати в друзі</button>
-
-        <div class="profile-daily-gratitude">
-            <h2 class="daily-gratitude-title">Подяка дня</h2>
-            {% if todays_gratitudes %}
-                <p class="daily-gratitude-description">{{ todays_gratitudes[0].content }}</p>
-                {% if todays_gratitudes[0].image_url %}
-                    <img class="gratitude_image" src="{{ url_for('static', filename=todays_gratitudes[0].image_url) }}" alt="Подяка дня">
-                {% endif %}
-            {% else %}
-                <p class="daily-gratitude-description">Немає сьогоднішніх подяк.</p>
-            {% endif %}
+    <div class="right-side">
+        <div class="info-about-user">
+            <h2 class="h2-info-user">Інформація про користувача</h2>
+            <div class="text-about-user">
+                <p>Вдячностей: {{ gratitudes_count }}</p>
+                <p>Друзів: {{ friends_count }}</p>
+            </div>
         </div>
 
-        <div class="profile-all-gratitudes">
-            <h2>Благодарності:</h2>
-            <ul>
-                {% for gratitude in gratitudes %}
-                    <li>
-                        <p>{{ gratitude.content }}</p>
+        <div class="profile-user-content">
+            <div class="profile-daily-gratitude">
+                <h2 class="daily-gratitude-title">Подяки дня</h2>
+                {% if todays_gratitudes and todays_gratitudes|length > 0 %}
+                    {% for gratitude in todays_gratitudes %}
+                        <p class="daily-gratitude-description">{{ gratitude.content }}</p>
                         {% if gratitude.image_url %}
-                            <img class="gratitude_image" src="{{ url_for('static', filename=gratitude.image_url) }}" alt="Gratitude Image">
+                            <img class="gratitude_image" src="{{ url_for('static', filename=gratitude.image_url) }}" alt="Подяка дня" />
                         {% endif %}
-                        <p>Дата: {{ gratitude.created_at }}</p>
-                    </li>
+                    {% endfor %}
                 {% else %}
-                    <li>Немає жодної благодарності.</li>
-                {% endfor %}
-            </ul>
+                    <p class="daily-gratitude-description">Немає сьогоднішніх подяк.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 

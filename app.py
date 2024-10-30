@@ -456,7 +456,6 @@ async def archive():
         all_gratitudes = gratitude_entries.scalars().all()
 
     return render_template('archive.html', user_gratitudes=all_gratitudes)
-
 @app.route('/gratitudes/<date>', methods=['GET'])
 async def gratitudes_by_date(date):
     user_id = session.get('user_id')
@@ -470,7 +469,8 @@ async def gratitudes_by_date(date):
         flash('Неправильний формат дати! Використовуйте YYYY-MM-DD.')
         return redirect(url_for('profile'))
 
-    todays_gratitudes = await get_todays_gratitudes_by_user_id(selected_date)
+    # Pass both user_id and selected_date to the function
+    todays_gratitudes = await get_todays_gratitudes_by_user_id(user_id, selected_date)
 
     return render_template('gratitudes_by_date.html', gratitudes=todays_gratitudes, selected_date=selected_date)
 

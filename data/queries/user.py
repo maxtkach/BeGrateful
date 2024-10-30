@@ -10,7 +10,7 @@ from ..tables import BaseEngine, User, Gratitude, Friendship
 
 from typing   import Optional
 from datetime import datetime, timedelta
-
+from sqlalchemy import func
 
 async def register_user(login: str, password: str, first_name: str, last_name: str, email: str) -> bool:
     stmt = select(
@@ -108,51 +108,47 @@ async def get_todays_gratitudes(user_id: int) -> Optional[tuple[Sequence[Gratitu
 
 
 
-async def get_gratitudes_by_method(method: str, current_user_id: int, user_id: int) -> tuple[User, Sequence[Gratitude], str | None] | str:
+async def check_friendship(current_user_id: int, user_id: int) -> bool:
+    async with BaseEngine.async_session() as db_session:
+        existing_friendship = await db_session.execute(
+            select(Friendship)
+            .filter_by(user_id=current_user_id, friend_user_id=user_id)
+        )
+        return existing_friendship.scalar() is not None
+
+async def get_gratitudes_by_method(method: str, current_user_id: int, user_id: int) -> tuple[User, Sequence[Gratitude], bool, str | None]:
     async with BaseEngine.async_session() as db_session:
         user = await db_session.execute(
             select(User)
-            .filter_by(id = user_id)
+            .filter_by(id=user_id)
         )
         user = user.scalar()
 
         if user is None:
-            return 'Користувача не знайдено!'
+            return 'Користувача не знайдено!', None, False, None
 
         gratitudes = await db_session.execute(
             select(Gratitude)
-            .options(
-                selectinload(Gratitude.user)
-            )
-            .filter_by(user_id = user_id)
+            .options(selectinload(Gratitude.user))
+            .filter_by(user_id=user_id)
         )
         gratitudes = gratitudes.scalars().all()
 
-        info = None
-        if method != 'POST':
-            return user, gratitudes, info
+        if method == 'POST':
+            if current_user_id == user.id:
+                return user, gratitudes, False, 'Ви не можете додати себе в друзі!'
 
-        if current_user_id == user.id:
-            info = 'Ви не можете додати себе в друзі!'
-            return user, gratitudes, info
+            is_friend = await check_friendship(current_user_id, user_id)
+            if is_friend:
+                return user, gratitudes, is_friend, 'Користувач вже є у вашому списку друзів!'
 
-        existing_friendship = await db_session.execute(
-            select(Friendship)
-            .filter_by(
-                user_id = current_user_id, 
-                friend_user_id = user.id
-            )
-        )
-        if existing_friendship.scalar():
-            info = 'Користувач вже є у вашому списку друзів!'
-        else:
-            new_friendship = Friendship(user_id = current_user_id, friend_user_id=user.id)
+            new_friendship = Friendship(user_id=current_user_id, friend_user_id=user.id)
             db_session.add(new_friendship)
             await db_session.commit()
+            return user, gratitudes, True, 'Користувача додано до друзів!'
 
-            info = 'Користувача додано до друзів!'
+        return user, gratitudes, False, None
 
-        return user, gratitudes, info
 
 async def get_search_users(query: str) -> Sequence[User]:
     async with BaseEngine.async_session() as db_session:
@@ -191,3 +187,19 @@ async def get_todays_gratitudes_by_user_id(user_id: int, selected_date: datetime
             )
         )
         return gratitude_entries.scalars().all()
+    
+async def get_user_stats(user_id):
+    async with BaseEngine.async_session() as db_session:
+        friends_count = await db_session.scalar(
+            select(func.count())
+            .select_from(Friendship)
+            .filter_by(user_id=user_id)
+        )
+
+        gratitudes_count = await db_session.scalar(
+            select(func.count())
+            .select_from(Gratitude)
+            .filter_by(user_id=user_id)
+        )
+
+    return friends_count, gratitudes_count
