@@ -155,19 +155,19 @@ li {
 
 .gratitude__footer {
   display: flex;
-  align-items: flex-start; /* Выровнять элементы по верху */
+  align-items: flex-start;
   gap: 40px;
   flex-wrap: wrap;
 }
 
 .gratitude__save-btn {
-  align-self: flex-start; /* Кнопка всегда будет наверху */
+  align-self: flex-start; 
 }
 
 .gratitude__public-option,
 .gratitude__friend-option,
 .gratitude__private-option  {
-  align-self: center; /* Чекбоксы будут выровнены по центру */
+  align-self: center;
 }
 
 .gratitude__save-btn {
@@ -197,7 +197,7 @@ li {
   font-size: 24px;
   color: #000;
   text-transform: lowercase;
-  margin-bottom: 20px; /* Добавляет отступ снизу между элементами */
+  margin-bottom: 20px;
 }
 
 .gratitude__checkbox {
@@ -445,9 +445,6 @@ li {
   margin-top: 20px;
 }
 
-
-
-
 .profile-header-name {
   z-index: 2;
   font-size: 32px;
@@ -456,16 +453,7 @@ li {
 .profile-header-username {
   font-weight: 200;
 }
-.add-friend {
-  margin: 30px;
-  padding-inline: 23px;
-  padding-block: 18px;
-  border: none;
-  background-color: #F0F0F0;
-  border-radius: 15px;
-  width: 240px;
-  font-size: 24px;
-}
+
 
 .edit-profile {
   padding-inline: 23px;
@@ -682,8 +670,8 @@ li {
 }
 
 .toggle-buttons {
-  display: flex; /* Устанавливаем flex-контейнер */
-  gap: 55px; /* Устанавливаем расстояние между кнопками */
+  display: flex;
+  gap: 55px;
 }
 
 .toggle-button {
@@ -770,10 +758,6 @@ h2 {
   font-size: 24px;
 }
 
-
-
-
-
 .modal-content {
   background-color: #fff;
   margin: 15% auto;
@@ -847,7 +831,7 @@ h2 {
   padding: 0;
   margin: 0;
   justify-content: center;
-  width: 100%; /* Центрируем сами ссылки */
+  width: 100%; 
   text-align: center;
 }
 
@@ -866,3 +850,95 @@ h2 {
   color: #000000;
   border-bottom: 2px solid #000000;
 }
+
+.btn-add-friend {
+  margin: 30px; /* Отступ вокруг кнопки */
+  padding: 18px 23px; /* Вертикальные и горизонтальные отступы внутри кнопки */
+  border: none; /* Убирает стандартную рамку */
+  border-radius: 15px; /* Закругленные углы */
+  width: 240px; /* Ширина кнопки */
+  font-size: 24px; /* Размер шрифта */
+  font-family: 'Manrope', sans-serif; /* Шрифт */
+  font-weight: 600; /* Жирность шрифта */
+  color: #000; /* Цвет текста */
+  cursor: pointer; /* Указывает на то, что элемент кликабельный */
+  transition: background-color 0.3s ease; /* Плавный переход цвета фона */
+}
+
+/* Стили для кнопки "Додати в друзі" */
+.btn-add-friend:not(:disabled) {
+  background-color: #007bff; /* Цвет фона кнопки "Додати в друзі" */
+}
+
+.btn-add-friend:not(:disabled):hover {
+  background-color: #0056b3; /* Темный цвет при наведении */
+}
+
+.btn-add-friend:not(:disabled):active {
+  background-color: #004085; /* Более темный цвет при нажатии */
+}
+
+/* Стили для кнопки "Вже друзі" */
+.btn-add-friend:disabled {
+  background-color: #F0F0F0; /* Цвет фона кнопки "Вже друзі" */
+  color: #000; /* Цвет текста */
+  cursor: not-allowed; /* Указывает, что кнопка недоступна */
+  opacity: 0.65; /* Полупрозрачность для отключенной кнопки */
+}
+
+#toggle-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.toggle-links {
+  list-style-type: none;
+  display: flex;
+  gap: 40px;
+  padding: 0;
+  margin: 0;
+}
+
+.toggle-links li {
+  position: relative;
+}
+
+.toggle-links a {
+  font-family: 'Manrope', sans-serif;
+  text-decoration: none;
+  color: #000000;
+  font-size: 24px;
+  font-weight: 500;
+  padding: 10px 0;
+  transition: color 0.3s ease;
+}
+
+.toggle-links a.active {
+  font-weight: bold;
+}
+
+.underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background-color: #000;
+  transition: transform 0.5s ease, width 0.5s ease;
+  transform: translateX(0);
+}
+
+
+.fade {
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+

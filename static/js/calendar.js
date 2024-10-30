@@ -52,19 +52,42 @@ document.getElementById("next-month").addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
 });
+const toggleCalendarButton = document.getElementById('toggle-calendar');
+const toggleListButton = document.getElementById('toggle-list');
+const underline = document.querySelector('.underline');
 
-document.getElementById("toggle-view").addEventListener("click", function() {
-    const gratitudeListContainer = document.getElementById("gratitude-list-container");
-    if (gratitudeListContainer.style.display === "none") {
-        gratitudeListContainer.style.display = "block";
-        document.getElementById("calendar-container").style.display = "none";
-        this.textContent = "Переключить на календарь";
-    } else {
-        gratitudeListContainer.style.display = "none";
-        document.getElementById("calendar-container").style.display = "block"; 
-        this.textContent = "Переключить на список благодарностей"; 
-    }
+// Функция для обновления позиции подчеркивания
+function moveUnderline(button) {
+    const rect = button.getBoundingClientRect();
+    const containerRect = document.getElementById('toggle-container').getBoundingClientRect();
+    underline.style.width = `${rect.width}px`;
+    underline.style.transform = `translateX(${rect.left - containerRect.left}px)`;
+}
+
+toggleCalendarButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('calendar-container').style.display = 'block';
+    document.getElementById('gratitude-list-container').style.display = 'none';
+
+    toggleCalendarButton.classList.add('active');
+    toggleListButton.classList.remove('active');
+
+    moveUnderline(toggleCalendarButton);
 });
+
+toggleListButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('calendar-container').style.display = 'none';
+    document.getElementById('gratitude-list-container').style.display = 'block';
+
+    toggleListButton.classList.add('active');
+    toggleCalendarButton.classList.remove('active');
+
+    moveUnderline(toggleListButton);
+});
+
+// Начальная позиция подчеркивания
+moveUnderline(toggleCalendarButton);
 
 
 renderCalendar();

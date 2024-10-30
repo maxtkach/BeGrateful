@@ -1,21 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Архив{% endblock %}
+{% block title %}Архів{% endblock %}
 
 {% block content %}
 <div id="toggle-container">
-    <button id="toggle-view">Переключить на список благодарностей</button>
+    <ul class="toggle-links">
+        <li><a href="#" id="toggle-calendar" class="active">Календар</a></li>
+        <li><a href="#" id="toggle-list">Список подяк</a></li>
+    </ul>
+    <div class="underline"></div>
 </div>
-
-<div id="calendar-container">
+<div id="calendar-container" class="fade">
     <h2 id="calendar-title"></h2>
     <button id="prev-month"><img src="{{ url_for('static', filename='icons/arrow-icon.svg') }}" alt=""></button>
     <button id="next-month"><img src="{{ url_for('static', filename='icons/arrow-icon.svg') }}" alt="" style="transform: rotate(180deg);"></button>
     <div id="calendar"></div>
 </div>
 
-<div id="gratitude-list-container" style="display: none;">
-    <h2 class="globel-title">Список благодарностей</h2>
+<div id="gratitude-list-container" class="fade" style="display: none;">
     {% if user_gratitudes %}
         <ul id="gratitude-list">  
         {% for gratitude in user_gratitudes %}
@@ -29,13 +31,13 @@
                         <img src="{{ url_for('static', filename=gratitude.image_url) }}" class="gratitude_image" alt="Gratitude Image">
                         {% endif %}
                     </div>
-                    <button class="delete-gratitude" data-id="{{ gratitude.id }}">Удалить</button>
+                    <button class="delete-gratitude" data-id="{{ gratitude.id }}">Видалити</button>
                 </div>
             </li>
         {% endfor %}
         </ul>  
     {% else %}
-        <p>Нет благодарностей.</p>
+        <p>Немає подяк.</p>
     {% endif %}
 </div>
 
@@ -69,6 +71,7 @@ $(document).on('click', '.delete-gratitude', function(e) {
         });
     }
 });
+
 </script>
 
 {% endblock %}
