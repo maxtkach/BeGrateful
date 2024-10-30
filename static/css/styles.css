@@ -942,3 +942,36 @@ h2 {
   visibility: hidden;
 }
 
+.global__gratitude_text {
+  display: flex;
+  flex-direction: column; /* Размещаем элементы в колонку */
+  align-items: flex-start; /* Выровнять элементы в начале по горизонтали */
+  position: relative; /* Для относительного позиционирования */
+}
+
+.gratitude_date {
+  text-align: right; /* Выравнивание текста по правому краю */
+  color: #888; /* Цвет текста, можно изменить по желанию */
+  cursor: pointer; /* Указатель при наведении */
+  margin-top: 10px; /* Отступ сверху */
+  position: relative; /* Необходимо для позиционирования tooltip */
+}
+
+.gratitude_date:hover::after {
+  content: attr(data-full-date); /* Показать точную дату при наведении */
+  position: absolute;
+  left: 0;
+  top: 100%; /* Позиционирование ниже текста */
+  background: rgba(0, 0, 0, 0.8); /* Фоновый цвет tooltip */
+  color: #fff; /* Цвет текста в tooltip */
+  padding: 5px;
+  border-radius: 4px;
+  white-space: nowrap; /* Запрет на перенос строк */
+  z-index: 10; /* Убедитесь, что tooltip отображается поверх других элементов */
+  opacity: 0; /* Начальная прозрачность */
+  transition: opacity 0.3s ease 0.5s; /* Плавное появление и задержка */
+}
+
+.gratitude_date:hover::after {
+  opacity: 1; 
+}

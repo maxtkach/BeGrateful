@@ -30,6 +30,9 @@
                         {% if gratitude.image_url %}
                         <img src="{{ url_for('static', filename=gratitude.image_url) }}" class="gratitude_image" alt="Gratitude Image">
                         {% endif %}
+
+                        {% include '_gratitude_date.html' %}
+
                     </div>
                     <button class="delete-gratitude" data-id="{{ gratitude.id }}">Видалити</button>
                 </div>

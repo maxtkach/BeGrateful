@@ -11,6 +11,8 @@ from ..tables import BaseEngine, User, Gratitude, Friendship
 from typing   import Optional
 from datetime import datetime, timedelta
 from sqlalchemy import func
+from babel.dates import format_timedelta, format_datetime
+
 
 async def register_user(login: str, password: str, first_name: str, last_name: str, email: str) -> bool:
     stmt = select(
@@ -69,6 +71,7 @@ async def add_gratitude(
             session.add(Gratitude(**kw))
             await session.commit()
 
+
 async def get_gratitudes() -> Sequence[Gratitude]:
     async with BaseEngine.async_session() as db_session:
         async with db_session.begin():
@@ -78,7 +81,12 @@ async def get_gratitudes() -> Sequence[Gratitude]:
                 .options(selectinload(Gratitude.user))
                 .order_by(Gratitude.created_at.desc()) 
             )
-            return result.scalars().all()
+            gratitudes = result.scalars().all()
+
+            for gratitude in gratitudes:
+                process_gratitude_date(gratitude)
+
+            return gratitudes
 
 async def get_todays_gratitudes(user_id: int) -> Optional[tuple[Sequence[Gratitude], User]]:
     async with BaseEngine.async_session() as db_session:
@@ -91,22 +99,23 @@ async def get_todays_gratitudes(user_id: int) -> Optional[tuple[Sequence[Gratitu
         if user is None:
             return None
 
-        # Получаем начало и конец текущего дня
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         tomorrow = today + timedelta(days=1)
 
-        # Выбираем и сортируем подяки по убыванию даты
         gratitude_entries = await db_session.execute(
             select(Gratitude)
             .filter_by(user_id=user_id)
             .filter(Gratitude.created_at >= today)
             .filter(Gratitude.created_at < tomorrow)
-            .order_by(Gratitude.created_at.desc())  # Сортируем по убыванию
+            .order_by(Gratitude.created_at.desc()) 
         )
-        return gratitude_entries.scalars().all(), user
+        
+        todays_gratitudes = gratitude_entries.scalars().all()
 
+        for gratitude in todays_gratitudes:
+            process_gratitude_date(gratitude)
 
-
+        return todays_gratitudes, user
 
 async def check_friendship(current_user_id: int, user_id: int) -> bool:
     async with BaseEngine.async_session() as db_session:
@@ -160,22 +169,22 @@ async def get_search_users(query: str) -> Sequence[User]:
 async def get_gratitudes_by_user_id(user_id: int) -> Sequence[Gratitude]:
     async with BaseEngine.async_session() as db_session:
         friendships = await db_session.execute(
-            select(Friendship)
+            select(Friendship.friend_user_id)
             .filter_by(user_id=user_id)
         )
-        friend_ids = [
-            friendship.friend_user_id 
-            for friendship in friendships.scalars().all()
-        ]
+        friend_ids = friendships.scalars().all()
+
+        if not friend_ids:
+            return []
 
         result = await db_session.execute(
             select(Gratitude)
-            .filter(Gratitude.user_id.in_(friend_ids))
-            .filter(Gratitude.is_public == True)
+            .filter(Gratitude.user_id.in_(friend_ids), Gratitude.is_public == True)
             .options(selectinload(Gratitude.user))
             .order_by(Gratitude.created_at.desc())
         )
         return result.scalars().all()
+
 
 async def get_todays_gratitudes_by_user_id(user_id: int, selected_date: datetime) -> Sequence[Gratitude]:
     async with BaseEngine.async_session() as db_session:
@@ -203,3 +212,15 @@ async def get_user_stats(user_id):
         )
 
     return friends_count, gratitudes_count
+
+def process_gratitude_date(gratitude: Gratitude) -> None:
+    if gratitude.created_at:
+        time_difference = datetime.now() - gratitude.created_at
+        gratitude.humanized_created_at = format_timedelta(
+            time_difference, 
+            locale='uk'
+        ) + " тому"
+        gratitude.full_date = format_datetime(gratitude.created_at, locale='uk', format='d MMMM yyyy, HH:mm')
+    else:
+        gratitude.humanized_created_at = 'Дата недоступна'
+        gratitude.full_date = 'Дата недоступна'

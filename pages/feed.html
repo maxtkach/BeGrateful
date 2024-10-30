@@ -1,27 +1,13 @@
-<!doctype html>
-<html lang="uk">
-<head>
-    <meta charset="utf-8">
-    <title>Подяки друзів</title>
-</head>
-<body>
-    <h1>Подяки друзів</h1>
-    <ul>
-        {% for item in gratitude %}
-            <li>
-                <strong>{{ item.user.login }}:</strong> {{ item.content }} <br>
-                {% if item.image_url %}
-                    <img src="{{ url_for('static', filename=item.image_url) }}" alt="Gratitude Image">
-                {% endif %}
-                <p>Дата: {{ item.created_at }}</p>
-            </li>
-        {% else %}
-            <li>Немає жодної благодарності від друзів.</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Назад на головну</a>
-    
-    <script src="{{ url_for('static', filename='js/gratitude.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
-</body>
-</html>
+<ul>
+    {% for item in gratitudes %}
+        <li>
+            <strong>{{ item.user.login }}:</strong> {{ item.content }} <br>
+            {% if item.image_url %}
+                <img src="{{ url_for('static', filename=item.image_url) }}" alt="Gratitude Image">
+            {% endif %}
+            <p>Дата: {{ item.created_at }}</p>
+        </li>
+    {% else %}
+        <li>Немає жодної благодарності від друзів.</li>
+    {% endfor %}
+</ul>

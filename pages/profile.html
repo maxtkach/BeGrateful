@@ -28,7 +28,6 @@
             <div class="text-about-user">
                 <p>Вдячностей: {{ gratitudes_count }}</p>
                 <p>Друзів: {{ friends_count }}</p>
-
             </div>
         </div>
 
@@ -37,19 +36,22 @@
                 <h2 class="daily-gratitude-title">Подяки дня</h2>
                 {% if todays_gratitudes and todays_gratitudes|length > 0 %}
                     {% for gratitude in todays_gratitudes %}
-                        <p class="daily-gratitude-description">{{ gratitude.content }}</p>
-                        {% if gratitude.image_url %}
-                            <img class="gratitude_image" src="{{ url_for('static', filename=gratitude.image_url) }}" alt="Подяка дня" />
-                        {% endif %}
+                        <div class="daily-gratitude-item">
+                            <p class="daily-gratitude-description">{{ gratitude.content }}</p>
+                            
+                            {% if gratitude.image_url %}
+                                <img class="gratitude_image" src="{{ url_for('static', filename=gratitude.image_url) }}" alt="Подяка дня" />
+                            {% endif %}
+                            
+                            {% include '_gratitude_date.html' %}
+
+                        </div>
                     {% endfor %}
                 {% else %}
                     <p class="daily-gratitude-description">Немає сьогоднішніх подяк.</p>
                 {% endif %}
             </div>
         </div>
-
-
-
 
     </div>
 
@@ -59,7 +61,7 @@
             <form method="POST" action="{{ url_for('edit_profile') }}" class="form-edit">
                 <label for="current_password">Поточний пароль*:</label>
                 <input class="input-modal-edit" type="password" name="current_password" required>
-    
+
                 <div class="modal-edit-names">
                     <div class="modal-edit-input">
                         <label for="first_name">Ім'я :</label>
@@ -70,25 +72,25 @@
                         <input class="input-modal-edit" name="last_name" value="{{ user.last_name }}">
                     </div>
                 </div>
-    
+
                 <div class="modal-edit-names">
                     <div class="modal-edit-input">
                         <label for="login">Логін:</label>
                         <input class="input-modal-edit" name="login" value="{{ user.login }}">
                     </div>
-    
+
                     <div class="modal-edit-input">
                         <label for="email">Пошта:</label>
                         <input class="input-modal-edit" name="email" value="{{ user.email }}">
                     </div>
                 </div>
-    
+
                 <label for="password">Новий пароль (якщо змінюється):</label>
                 <input class="input-modal-edit" type="password" name="password">
-    
+
                 <label for="confirm_password">Підтвердіть новий пароль:</label>
                 <input class="input-modal-edit" type="password" name="confirm_password">
-    
+
                 <button class="submit-edit" type="submit">Зберегти зміни</button>
             </form>
             <form method="POST" action="{{ url_for('logout') }}" style="display: inline;">

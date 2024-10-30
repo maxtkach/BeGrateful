@@ -22,7 +22,7 @@ from data.queries.user import (
     register_user, get_user_id, add_gratitude, 
     get_gratitudes, get_todays_gratitudes, get_gratitudes_by_method, 
     get_search_users, get_gratitudes_by_user_id, get_todays_gratitudes_by_user_id,
-    get_user_stats, check_friendship
+    get_user_stats, check_friendship, process_gratitude_date
 )
 
 from datetime import datetime
@@ -107,7 +107,6 @@ async def register():
     if len(password) > CHAR_LIMITS['password']:
         errors['password'] = f"Пароль не повинен перевищувати {CHAR_LIMITS['password']} символів!"
 
-    # Остальные проверки (валидность имени, логина, почты и пароля)
     if first_name and not is_valid_name(first_name):
         errors['first_name'] = 'Ім\'я повинно містити лише букви!'
     
@@ -126,21 +125,17 @@ async def register():
     if password != confirm_password:
         errors['confirm_password'] = 'Паролі не співпадають!'
 
-    # Если есть ошибки, отображаем их
     if errors:
         general_error = 'Некоректні дані. Перевірте їх і повторіть спробу'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
 
-    # Регистрация пользователя
     is_exist = await register_user(login, password, first_name, last_name, email)
     
     if is_exist:
         general_error = 'Такий користувач уже існує!'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
 
-    # Успешная регистрация, редирект на главную страницу
     return redirect(url_for('index'))
-    #return render_template('register.html', errors=errors, form=request.form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -382,7 +377,6 @@ async def profile():
         return redirect(url_for('index'))
 
     todays_gratitudes, user = data
-    
     friends_count, gratitudes_count = await get_user_stats(user_id)
 
     return render_template(
@@ -392,6 +386,7 @@ async def profile():
         friends_count=friends_count,
         gratitudes_count=gratitudes_count
     )
+
 
 @app.route('/user/<int:user_id>', methods=['GET', 'POST'])
 async def user_profile(user_id):
@@ -449,13 +444,17 @@ async def archive():
         return redirect(url_for('login_view'))
 
     async with BaseEngine.async_session() as db_session:
-
         gratitude_entries = await db_session.execute(
             select(Gratitude).options(selectinload(Gratitude.user)).filter_by(user_id=user_id).order_by(Gratitude.created_at.desc())
         )
         all_gratitudes = gratitude_entries.scalars().all()
 
+        for gratitude in all_gratitudes:
+            process_gratitude_date(gratitude)
+
     return render_template('archive.html', user_gratitudes=all_gratitudes)
+
+
 @app.route('/gratitudes/<date>', methods=['GET'])
 async def gratitudes_by_date(date):
     user_id = session.get('user_id')
@@ -469,7 +468,6 @@ async def gratitudes_by_date(date):
         flash('Неправильний формат дати! Використовуйте YYYY-MM-DD.')
         return redirect(url_for('profile'))
 
-    # Pass both user_id and selected_date to the function
     todays_gratitudes = await get_todays_gratitudes_by_user_id(user_id, selected_date)
 
     return render_template('gratitudes_by_date.html', gratitudes=todays_gratitudes, selected_date=selected_date)
@@ -521,7 +519,6 @@ async def delete_gratitude(gratitude_id):
             return jsonify({'success': True}), 200
 
         return jsonify({'error': 'Gratitude not found'}), 404
-
 @app.route('/friends_gratitudes')
 async def friends_gratitudes():
     user_id = session.get('user_id')
@@ -535,7 +532,6 @@ async def friends_gratitudes():
         )
         friend_ids = [friendship.friend_user_id for friendship in friendships.scalars().all()]
 
-        # Fetch gratitudes from friends
         gratitudes = await db_session.execute(
             select(Gratitude)
             .filter(Gratitude.user_id.in_(friend_ids))
@@ -544,5 +540,9 @@ async def friends_gratitudes():
             .order_by(Gratitude.created_at.desc())
         )
         gratitudes = gratitudes.scalars().all()
+
+        # Обработка даты для каждой подяки
+        for gratitude in gratitudes:
+            process_gratitude_date(gratitude)
 
     return render_template('global.html', gratitudes=gratitudes)
