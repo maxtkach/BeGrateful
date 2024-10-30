@@ -2,47 +2,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const friendsModal = document.getElementById('friendsModal');
     const closeFriendsModalBtn = document.getElementById('closeFriendsModalBtn');
     const friendsIcon = document.getElementById('friendsIcon');
-
-    function openModal() {
-        friendsModal.style.display = 'block';
-    }
-
-    function closeModal() {
-        friendsModal.style.display = 'none';
-    }
-
+    
+    // Открытие модального окна друзей
     friendsIcon.addEventListener('click', function(event) {
         event.preventDefault();
-        openModal();
+        friendsModal.style.display = 'block';
     });
 
-    closeFriendsModalBtn.addEventListener('click', closeModal);
+    // Закрытие модального окна
+    function closeModal(modal) {
+        modal.style.display = 'none';
+    }
 
+    // Закрытие модальных окон при клике вне их содержимого
     window.addEventListener('click', function(event) {
         if (event.target === friendsModal) {
-            closeModal();
+            closeModal(friendsModal);
+        } else if (event.target === modal) { // Предполагаем, что modal определен глобально
+            closeModal(modal);
         }
+    });
+
+    closeFriendsModalBtn.addEventListener('click', function() {
+        closeModal(friendsModal);
     });
 
     // Edit Profile Modal
     const modal = document.getElementById("editProfileModal");
     const btn = document.getElementById("editProfileButton");
-    const span = document.getElementsByClassName("close")[0];
+    const closeEditBtn = document.getElementsByClassName("close")[0];
 
     btn.onclick = function() {
         modal.style.display = "block";
     }
 
-    span.onclick = function() {
-        modal.style.display = "none";
+    closeEditBtn.onclick = function() {
+        closeModal(modal);
         clearPasswordFields();
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-            clearPasswordFields(); 
-        }
     }
 
     function clearPasswordFields() {
@@ -68,10 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Функция для переключения видимости пароля
 function togglePassword(fieldId) {
     const passwordField = document.getElementById(fieldId);
-    const type = passwordField.type === 'password' ? 'text' : 'password';
-    passwordField.type = type;
+    passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
 }
-
 
 function deleteGratitude(gratitudeId) {
     fetch(`/delete_gratitude/${gratitudeId}`, {
