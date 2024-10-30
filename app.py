@@ -21,7 +21,8 @@ from data.tables       import BaseEngine, User, Friendship, Gratitude
 from data.queries.user import (
     register_user, get_user_id, add_gratitude, 
     get_gratitudes, get_todays_gratitudes, get_gratitudes_by_method, 
-    get_search_users, get_gratitudes_by_user_id, get_todays_gratitudes_by_user_id
+    get_search_users, get_gratitudes_by_user_id, get_todays_gratitudes_by_user_id,
+    get_user_stats, check_friendship
 )
 
 from datetime import datetime
@@ -62,7 +63,6 @@ async def index():
     user_id = session.get('user_id')
     friends_list = await get_friends(user_id) if user_id else []
     return render_template('index.html', friends=friends_list)
-
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -176,13 +176,30 @@ async def login_view():
 
 @app.route('/create', methods=['GET', 'POST'])
 async def create_gratitude():
-
     user_id = session.get('user_id')
     if not user_id:
         flash('Спершу увійдіть до системи!', 'warning')  
         return redirect(url_for('login_view'))  
 
     if request.method == 'POST':
+
+        today = datetime.now().date()
+        async with BaseEngine.async_session() as db_session:
+            gratitude_count = await db_session.execute(
+                select(func.count())
+                .select_from(Gratitude)
+                .filter(
+                    Gratitude.user_id == user_id,
+                    Gratitude.created_at >= today
+                )
+            )
+            count = gratitude_count.scalar()
+
+        GRATITUDE_LIMIT = 3
+        if count >= GRATITUDE_LIMIT:
+            flash(f'Ви досягли ліміту в {GRATITUDE_LIMIT} подяк за день!', 'warning')
+            return redirect(url_for('index'))
+
         content = request.form.get('content')
         image = request.files.get('image')
         gratitude_option = request.form.get('gratitude_option')
@@ -214,7 +231,7 @@ async def create_gratitude():
 
 @app.route('/global_gratitudes')
 async def global_gratitudes():
-    gratitudes = await get_gratitudes()  # This function should return all global gratitudes
+    gratitudes = await get_gratitudes()  
 
     return render_template('global.html', gratitudes=gratitudes)
 
@@ -365,21 +382,9 @@ async def profile():
         return redirect(url_for('index'))
 
     todays_gratitudes, user = data
+    
+    friends_count, gratitudes_count = await get_user_stats(user_id)
 
-    async with BaseEngine.async_session() as db_session:
-        friends_count = await db_session.scalar(
-            select(func.count())
-            .select_from(Friendship)
-            .filter_by(user_id=user_id)
-        )
-
-        gratitudes_count = await db_session.scalar(
-            select(func.count())
-            .select_from(Gratitude)
-            .filter_by(user_id=user_id)
-        )
-
-    # Передаем все данные в шаблон
     return render_template(
         'profile.html', 
         user=user, 
@@ -388,25 +393,29 @@ async def profile():
         gratitudes_count=gratitudes_count
     )
 
-
-
 @app.route('/user/<int:user_id>', methods=['GET', 'POST'])
 async def user_profile(user_id):
     current_user_id = session.get('user_id')
     if not current_user_id:
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
-    
+
+    is_friend = await check_friendship(current_user_id, user_id)
+
     data = await get_gratitudes_by_method(request.method, current_user_id, user_id)
     if isinstance(data, str):
         flash(data)
-        return redirect(url_for('feed')) 
-    
-    user, gratitudes, info = data
+        return redirect(url_for('feed'))
+
+    user, gratitudes, _, info = data
     if info is not None:
         flash(info)
 
-    return render_template('user_profile.html', user=user, gratitudes=gratitudes)
+    friends_count, gratitudes_count = await get_user_stats(user_id)
+
+    return render_template('user_profile.html', user=user, gratitudes=gratitudes,
+                           friends_count=friends_count, gratitudes_count=gratitudes_count,
+                           is_friend=is_friend)
 
 @app.route('/search_users')
 async def search_users():
