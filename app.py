@@ -406,9 +406,7 @@ async def user_profile(user_id):
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
 
-    # Перенаправление на профиль, если user_id совпадает с current_user_id
-    if user_id == current_user_id:
-        return redirect(url_for('profile'))
+
 
     is_friend = await check_friendship(current_user_id, user_id)
 
