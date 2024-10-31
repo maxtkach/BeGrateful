@@ -22,7 +22,8 @@ from data.queries.user import (
     register_user, get_user_id, add_gratitude, 
     get_gratitudes, get_todays_gratitudes, get_gratitudes_by_method, 
     get_search_users, get_gratitudes_by_user_id, get_todays_gratitudes_by_user_id,
-    get_user_stats, check_friendship, process_gratitude_date
+    get_user_stats, check_friendship, process_gratitude_date,
+    update_user_description, get_user_description
 )
 
 from datetime import datetime
@@ -362,14 +363,23 @@ async def friends():
 
     return render_template('friends.html', friends=friends_list)
 
-
-
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 async def profile():
     user_id = session.get('user_id')
     if not user_id:
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
+
+    user_description = await get_user_description(user_id)
+
+    if request.method == 'POST':
+        description = request.form.get('description')
+        if description:
+            await update_user_description(user_id, description)
+            flash('Опис успішно оновлено!', 'success')
+            user_description = description 
+        else:
+            flash('Помилка при оновленні опису.', 'error')
 
     data = await get_todays_gratitudes(user_id)
     if data is None:
@@ -384,7 +394,8 @@ async def profile():
         user=user, 
         todays_gratitudes=todays_gratitudes,
         friends_count=friends_count,
-        gratitudes_count=gratitudes_count
+        gratitudes_count=gratitudes_count,
+        user_description=user_description 
     )
 
 
@@ -394,6 +405,10 @@ async def user_profile(user_id):
     if not current_user_id:
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
+
+    # Перенаправление на профиль, если user_id совпадает с current_user_id
+    if user_id == current_user_id:
+        return redirect(url_for('profile'))
 
     is_friend = await check_friendship(current_user_id, user_id)
 
@@ -411,6 +426,7 @@ async def user_profile(user_id):
     return render_template('user_profile.html', user=user, gratitudes=gratitudes,
                            friends_count=friends_count, gratitudes_count=gratitudes_count,
                            is_friend=is_friend)
+
 
 @app.route('/search_users')
 async def search_users():
@@ -519,6 +535,7 @@ async def delete_gratitude(gratitude_id):
             return jsonify({'success': True}), 200
 
         return jsonify({'error': 'Gratitude not found'}), 404
+    
 @app.route('/friends_gratitudes')
 async def friends_gratitudes():
     user_id = session.get('user_id')
@@ -541,8 +558,26 @@ async def friends_gratitudes():
         )
         gratitudes = gratitudes.scalars().all()
 
-        # Обработка даты для каждой подяки
         for gratitude in gratitudes:
             process_gratitude_date(gratitude)
 
     return render_template('global.html', gratitudes=gratitudes)
+
+
+@app.route('/update_profile_description', methods=['POST'])
+async def update_profile_description():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Користувач не знайдений!'}), 404
+
+    data = request.get_json()
+    if not data or 'description' not in data:
+        return jsonify({'error': 'Опис не може бути пустим.'}), 400
+
+    description = data['description']
+
+    try:
+        await update_user_description(user_id, description)
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

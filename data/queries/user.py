@@ -1,4 +1,4 @@
-from sqlalchemy.sql import select, exists
+from sqlalchemy.sql import update, select, exists
 from sqlalchemy.orm import selectinload
 from sqlalchemy.engine.result import Sequence
 
@@ -9,7 +9,7 @@ from ..tables import BaseEngine, User, Gratitude, Friendship
 
 
 from typing   import Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy import func
 from babel.dates import format_timedelta, format_datetime
 
@@ -215,12 +215,34 @@ async def get_user_stats(user_id):
 
 def process_gratitude_date(gratitude: Gratitude) -> None:
     if gratitude.created_at:
-        time_difference = datetime.now() - gratitude.created_at
+
+        local_timezone = timezone(timedelta(hours=2))
+
+        local_created_at = gratitude.created_at.replace(tzinfo=timezone.utc).astimezone(local_timezone)
+        time_difference = datetime.now(local_timezone) - local_created_at
         gratitude.humanized_created_at = format_timedelta(
-            time_difference, 
+            time_difference,
             locale='uk'
         ) + " тому"
-        gratitude.full_date = format_datetime(gratitude.created_at, locale='uk', format='d MMMM yyyy, HH:mm')
+        gratitude.full_date = format_datetime(local_created_at, locale='uk', format='d MMMM yyyy, HH:mm')
     else:
         gratitude.humanized_created_at = 'Дата недоступна'
         gratitude.full_date = 'Дата недоступна'
+
+async def get_user_description(user_id: int) -> Optional[str]:
+    async with BaseEngine.async_session() as session:
+        result = await session.execute(select(User).filter_by(id=user_id))
+        user = result.scalar_one_or_none()
+        
+        if user:
+            return user.description 
+    return None 
+
+async def update_user_description(user_id, description):
+    async with BaseEngine.async_session() as session:
+        user = await session.execute(select(User).filter_by(id=user_id))
+        user = user.scalar_one_or_none()
+        if user:
+            user.description = description
+            session.add(user)
+            await session.commit()

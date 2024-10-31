@@ -38,6 +38,7 @@ class User(Base):
     login:      Mapped[TEXT[50]]  = mapped_column(TEXT[50],  unique   = True, nullable = False)
     email:      Mapped[TEXT[100]] = mapped_column(TEXT[100], unique   = True, nullable = False)
     password:   Mapped[TEXT[200]]      = mapped_column(TEXT[200], nullable = False)
+    description: Mapped[TEXT[500]] = mapped_column(TEXT[500], nullable=True)
 
     gratitudes: Mapped[list['Gratitude']] = relationship('Gratitude', back_populates = 'user')
 

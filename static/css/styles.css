@@ -975,3 +975,36 @@ h2 {
 .gratitude_date:hover::after {
   opacity: 1; 
 }
+.profile-description-container {
+  margin-top: 20px; /* Отступ сверху */
+  padding: 15px; /* Внутренние отступы */
+  background-color: #F8F8F8; /* Светлый фон для блока описания */
+  border-radius: 10px; /* Закругление углов */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.profile-description {
+  font-size: 18px; /* Размер текста описания */
+  color: #333; /* Цвет текста */
+  cursor: pointer; /* Курсор в виде руки при наведении */
+  transition: color 0.3s; /* Плавный переход цвета */
+}
+
+.profile-description:hover {
+  color: #698BFF; /* Цвет при наведении */
+}
+
+.submit-edit {
+  background-color: #698BFF; /* Цвет кнопки */
+  color: white; /* Цвет текста кнопки */
+  border: none; /* Без границы */
+  padding: 10px 15px; /* Внутренние отступы кнопки */
+  border-radius: 5px; /* Закругление углов кнопки */
+  cursor: pointer; /* Курсор в виде руки */
+  margin-top: 10px; /* Отступ сверху */
+  transition: background-color 0.3s; /* Плавный переход для фона */
+}
+
+.submit-edit:hover {
+  background-color: #4A6ED9; /* Цвет кнопки при наведении */
+}

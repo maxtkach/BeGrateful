@@ -6,28 +6,40 @@
 <section class="profile">
 
     <div class="left-side">
-
         <div class="profile-header">
             <h1 class="profile-header-text">Профіль</h1>
             <div class="profile-header-content">
-                <img src="{{ url_for('static', filename='imagesforcss/profile-image.jpg') }}" alt=""
-                    class="profile_img_big">
+                <img src="{{ url_for('static', filename='imagesforcss/profile-image.jpg') }}" alt="" class="profile_img_big">
                 <h2 class="profile-header-name">{{ user.first_name }} {{ user.last_name }}</h2>
                 <p class="profile-header-username"><span>@</span>{{ user.login }}</p>
                 <div class="profile-buttons">
                     <button class="edit-profile passive" id="editProfileButton">Змінити профіль</button>
                 </div>
-
+                
+                <div class="profile-description-container">
+                    <p id="profileDescriptionText" class="profile-description" onclick="editDescription()">
+                        Опис: {{ user.description or 'Немає опису' }}
+                    </p>
+                    
+                    <div id="editDescriptionContainer" style="display: none;">
+                        <textarea id="profileDescriptionInput" class="input-modal-edit" placeholder="Введіть новий опис">{{ user.profile_description }}</textarea>
+                        <button class="submit-edit" onclick="saveDescription()">Зберегти</button>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
-
+    
     <div class="right-side">
         <div class="info-about-user">
             <h2 class="h2-info-user">Інформація про користувача</h2>
             <div class="text-about-user">
-                <p>Вдячностей: {{ gratitudes_count }}</p>
-                <p>Друзів: {{ friends_count }}</p>
+                <div class="text-about-user">
+                    <p>Вдячностей: {{ gratitudes_count }}</p>
+                    <p>Друзів: {{ friends_count }}</p>
+                </div>
+                
             </div>
         </div>
 
@@ -44,7 +56,6 @@
                             {% endif %}
                             
                             {% include '_gratitude_date.html' %}
-
                         </div>
                     {% endfor %}
                 {% else %}
@@ -100,4 +111,55 @@
     </div>
 
 </section>
+
+<script>
+function editDescription() {
+    document.getElementById('profileDescriptionText').style.display = 'none';
+    document.getElementById('editDescriptionContainer').style.display = 'block';
+}
+function saveDescription() {
+    const description = document.getElementById('profileDescriptionInput').value;
+    fetch('/update_profile_description', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ description: description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+
+            document.getElementById('profileDescriptionText').innerText = 'Опис: ' + description; 
+            alert('Опис збережено успішно!');
+            document.getElementById('editDescriptionContainer').style.display = 'none';
+            document.getElementById('profileDescriptionText').style.display = 'block';
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Сталася помилка при збереженні опису.');
+    });
+}
+
+    const modal = document.getElementById("editProfileModal");
+    const btn = document.getElementById("editProfileButton");
+    const closeEditBtn = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    closeEditBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 {% endblock %}

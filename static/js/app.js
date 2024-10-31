@@ -27,24 +27,47 @@ document.addEventListener('DOMContentLoaded', function() {
         closeModal(friendsModal);
     });
 
-    // Edit Profile Modal
+     // Editable Profile Description
+     const editDescriptionButton = document.querySelector('.edit-btn[data-field="profileDescription"]');
+     const descriptionSpan = document.getElementById('profileDescription');
+     const descriptionInput = document.getElementById('profileDescriptionInput');
+ 
+     editDescriptionButton.addEventListener('click', function () {
+         if (descriptionSpan.style.display !== 'none') {
+             descriptionSpan.style.display = 'none';
+             descriptionInput.style.display = 'inline';
+             this.textContent = 'Зберегти';
+         } else {
+             descriptionSpan.style.display = 'inline';
+             descriptionInput.style.display = 'none';
+             this.textContent = 'Редагувати';
+ 
+             const newValue = descriptionInput.value;
+             sendUpdatedValueToServer('description', newValue); // Sending the updated value to the server
+         }
+     });
+ 
+// Открытие модального окна
     const modal = document.getElementById("editProfileModal");
     const btn = document.getElementById("editProfileButton");
     const closeEditBtn = document.getElementsByClassName("close")[0];
-
+     
     btn.onclick = function() {
         modal.style.display = "block";
     }
-
+    
     closeEditBtn.onclick = function() {
         closeModal(modal);
         clearPasswordFields();
     }
-
-    function clearPasswordFields() {
-        document.getElementById('current_password').value = '';
-        document.getElementById('new_password').value = '';
+    
+    // Закрытие модального окна при нажатии вне его
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal(modal);
+        }
     }
+    
 
     // Delete Gratitude
     const deleteButtons = document.querySelectorAll('.delete-gratitude');
@@ -87,5 +110,29 @@ function deleteGratitude(gratitudeId) {
     })
     .catch(error => {
         console.error('Ошибка:', error);
+    });
+    
+}
+
+function sendUpdatedValueToServer(field, newValue) {
+    fetch(`/update_profile`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ field: field, value: newValue }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                alert(`Ошибка: ${err.error}`);
+            });
+
+        }
+        alert('Профіль успішно оновлено.');
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Системна помилка. Спробуйте ще раз пізніше.');
     });
 }
