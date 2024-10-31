@@ -8,6 +8,10 @@ li {
   cursor: pointer;
 }
 
+img{
+  object-fit: cover;
+}
+
 
 @font-face {
   font-family: 'Manrope';
