@@ -20,7 +20,13 @@
                         <button type="submit" class="btn btn-add-friend">Додати в друзі</button>
                     </form>
                 {% endif %}
-                
+                <div class="profile-description-container">
+                    <p id="profileDescriptionText" class="profile-description" onclick="editDescription()">
+                        Опис: {{ user.description or 'Немає опису' }}
+                    </p>
+                    
+
+                </div>
 
                 </div>
             </div>
