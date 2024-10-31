@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="/static/js/app.js"></script>
 
     <title>BeGrateful</title>
@@ -12,7 +13,7 @@
 
 <body>
     <header class="header">
-        <nav class="header__navigation">
+        <nav class="header__navigation" style="  justify-content: center !important; ">
             <img src="{{ url_for('static', filename='icons/logo.svg') }}" alt="Logo Icon" class="header__logo">
         </nav>
     </header>
@@ -53,29 +54,30 @@
                         <label for="password" class="{{ 'error-label' if errors.get('password') else '' }}">Пароль*</label>
                         <div class="password-wrapper">
                             <input type="password" id="password" name="password" maxlength="{{ CHAR_LIMITS['password'] }}" class="{{ 'input-error' if errors.get('password') else 'input-normal' }}" required>
-                            <span class="toggle-password" onclick="togglePassword('password', this)">
+                            <span class="toggle-password" onclick="togglePassword(this)">
                                 <img src="{{ url_for('static', filename='icons/eye-icon.svg') }}" alt="Eye Icon">
                             </span>
                         </div>
                     </div>
-
+                
                     <div class="nameAndPass2">
                         <label for="confirm_password" class="{{ 'error-label' if errors.get('confirm_password') else '' }}">Підтвердіть пароль*</label>
                         <div class="password-wrapper">
                             <input type="password" id="confirm_password" name="confirm_password" maxlength="{{ CHAR_LIMITS['password'] }}" class="{{ 'input-error' if errors.get('confirm_password') else 'input-normal' }}" required>
-                            <span class="toggle-password" onclick="togglePassword('confirm_password', this)">
+                            <span class="toggle-password" onclick="togglePassword(this)">
                                 <img src="{{ url_for('static', filename='icons/eye-icon.svg') }}" alt="Eye Icon">
                             </span>
                         </div>
                     </div>
                 </div>
+                
 
                 <button type="submit">Реєстрація</button>
 
             </form>
 
             {% if general_error %}
-            <p class="error-message">{{ general_error }}</p>
+            <p class="flash-messages message-error">{{ general_error }}</p>
             {% endif %}
 
         </div>

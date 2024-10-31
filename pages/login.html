@@ -9,13 +9,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <title>BeGrateful</title>
 </head>
 
 <body>
     <header class="header">
-        <nav class="header__navigation">
-            <img src="{{ url_for('static', filename='icons/logo.svg') }}" alt="Logo Icon" class="header__logo">
+        <nav class="header__navigation" style="  justify-content: center !important; ">
+            <img src="{{ url_for('static', filename='icons/logo.svg') }}" alt="Logo Icon" class="header__logo" >
             
 
         </nav>
@@ -41,7 +42,7 @@
                     <input type="password" id="password" name="password" class="{{ 'input-error' if errors.get('password') else 'input-normal' }}" required>
 
                     {% if errors.get('password') %}
-                        <p class="error-message">{{ errors['password'] }}</p>
+                        <p class="flash-messages message-error">{{ errors['password'] }}</p>
                     {% endif %}
                 </div>
 
