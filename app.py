@@ -136,6 +136,9 @@ async def register():
         general_error = 'Такий користувач уже існує!'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
 
+    user_id = await get_user_id(login, password)  
+    session['user_id'] = user_id 
+
     return redirect(url_for('index'))
 
 
