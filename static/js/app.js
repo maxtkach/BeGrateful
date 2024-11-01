@@ -14,15 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'none';
     }
 
-
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    fetch('/set_timezone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ timezone: timezone })
-    });
-    
     // Закрытие модальных окон при клике вне их содержимого
     window.addEventListener('click', function(event) {
         if (event.target === friendsModal) {
@@ -187,8 +178,4 @@ document.querySelector('.icon-hide-profile').addEventListener('click', function(
         icon.classList.add('flipped');
     }
 });
-
-
-
-
 

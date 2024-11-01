@@ -58,6 +58,49 @@
   </div>
 </div>
 
+    <div class="gratitude">
+      <h2 class="gratitude__title">За що ви вдячні сьогодні?</h2>
+      <form method="POST" action="{{ url_for('create_gratitude') }}" enctype="multipart/form-data">
+        <div class="gratitude__content">
+          <div class="gratitude__input-wrapper">
+            <label for="gratitude-input" class="gratitude__file-label">
+              <img src="{{ url_for('static', filename='icons/screpka-icon.svg') }}" alt="" />
+            </label>
+            <textarea id="gratitude-input" name="content" class="gratitude__textarea" rows="2"
+              placeholder="Напишіть, за що ви вдячні сьогодні..." required></textarea>
+          </div>
+          <input type="file" id="gratitude__input" name="image" multiple accept="image/*" style="display: none;">
+          <div class="gratitude__images" id="gratitude__images-preview"></div>
+        </div>
+        <div class="gratitude__footer">
+          <button type="submit" class="gratitude__save-btn">Зберегти</button>
+          <div>
+            <div class="gratitude__public-option">
+              <input type="radio" id="public" class="gratitude__checkbox" name="gratitude_option" value="public" checked>
+              <label for="public" class="gratitude__public-label">Зробити вдячність публічною*</label>
+            </div>
+            <div class="gratitude__friend-option">
+              <input type="radio" id="friend" class="gratitude__checkbox" name="gratitude_option" value="friend">
+              <label for="friend" class="gratitude__friend-label">Зробити вдячність для друзів*</label>
+            </div>
+            <div class="gratitude__private-option">
+              <input type="radio" id="private" class="gratitude__checkbox" name="gratitude_option" value="private">
+              <label for="private" class="gratitude__private-label">Зробити вдячність приватною*</label>
+            </div>
+          </div>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages message-{{ category }}">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+      
+      </form>
+    </div>
 {% endblock %}
 
 
