@@ -71,20 +71,17 @@ async def register():
     errors = {}
     general_error = None
 
-    # Определяем лимиты символов для полей ввода
     CHAR_LIMITS = {
         'first_name': 25,
         'last_name': 35,
         'login': 25,
-        'email': 25,  # Можно изменить лимит в зависимости от требований
-        'password': 50  # Максимальная длина пароля
+        'email': 25,
+        'password': 50
     }
 
-    # Если запрос GET, отдаем форму регистрации
     if request.method == 'GET':
         return render_template('register.html', errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
 
-    # Получаем данные формы
     first_name = request.form.get('first_name', '')
     last_name = request.form.get('last_name', '')
     login = request.form['login']
@@ -133,12 +130,10 @@ async def register():
     is_exist = await register_user(login, password, first_name, last_name, email)
     
     if is_exist:
-        general_error = 'Такий користувач уже існує!'
+        general_error = 'Користувач з таким логіном або електронною поштою вже існує!'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
     
-
     return redirect(url_for('index'))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 async def login_view():
