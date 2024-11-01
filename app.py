@@ -27,7 +27,7 @@ from data.queries.user import (
 )
 
 from datetime import datetime
-import pytz
+
 
 app = Flask(__name__, template_folder = 'pages')
 app.secret_key = settings.SECRET_KEY.get_secret_value()
@@ -418,24 +418,29 @@ async def user_profile(user_id):
         user = result.scalar()
 
     if user is None:
-        flash("Користувач не знайдений.")
+        flash("Користувача не знайдено.")
         return redirect(url_for('feed'))
 
-    is_friend = await check_friendship(current_user_id, user_id)
+    if request.method == 'POST':
 
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    gratitudes = await get_todays_gratitudes_by_user_id(user_id, today)
+        user, gratitudes, is_friend, message = await get_gratitudes_by_method('POST', current_user_id, user_id)
+        flash(message)
 
-    gratitudes.sort(key=lambda x: x.created_at, reverse=True)
-
-    for gratitude in gratitudes:
-        process_gratitude_date(gratitude)
-    
-    friends_count, gratitudes_count = await get_user_stats(user_id)
+        gratitudes_count = len(gratitudes)
+        friends_count, _ = await get_user_stats(user_id)
+    else:
+        is_friend = await check_friendship(current_user_id, user_id)
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        gratitudes = await get_todays_gratitudes_by_user_id(user_id, today)
+        gratitudes.sort(key=lambda x: x.created_at, reverse=True)
+        for gratitude in gratitudes:
+            process_gratitude_date(gratitude)
+        friends_count, gratitudes_count = await get_user_stats(user_id)
 
     return render_template('user_profile.html', user=user, gratitudes=gratitudes,
                            friends_count=friends_count, gratitudes_count=gratitudes_count,
                            is_friend=is_friend)
+
 
 @app.route('/search_users')
 async def search_users():
