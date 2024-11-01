@@ -117,6 +117,7 @@ async def get_todays_gratitudes(user_id: int) -> Optional[tuple[Sequence[Gratitu
 
         return todays_gratitudes, user
 
+
 async def check_friendship(current_user_id: int, user_id: int) -> bool:
     async with BaseEngine.async_session() as db_session:
         existing_friendship = await db_session.execute(

@@ -27,7 +27,7 @@ from data.queries.user import (
 )
 
 from datetime import datetime
-
+import pytz
 
 app = Flask(__name__, template_folder = 'pages')
 app.secret_key = settings.SECRET_KEY.get_secret_value()
@@ -135,6 +135,7 @@ async def register():
     if is_exist:
         general_error = 'Такий користувач уже існує!'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
+    
 
     return redirect(url_for('index'))
 
@@ -406,25 +407,29 @@ async def user_profile(user_id):
         flash('Спершу увійдіть до системи!')
         return redirect(url_for('login_view'))
 
+    async with BaseEngine.async_session() as db_session:
+        result = await db_session.execute(select(User).filter_by(id=user_id))
+        user = result.scalar()
 
+    if user is None:
+        flash("Користувач не знайдений.")
+        return redirect(url_for('feed'))
 
     is_friend = await check_friendship(current_user_id, user_id)
 
-    data = await get_gratitudes_by_method(request.method, current_user_id, user_id)
-    if isinstance(data, str):
-        flash(data)
-        return redirect(url_for('feed'))
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    gratitudes = await get_todays_gratitudes_by_user_id(user_id, today)
 
-    user, gratitudes, _, info = data
-    if info is not None:
-        flash(info)
+    gratitudes.sort(key=lambda x: x.created_at, reverse=True)
 
+    for gratitude in gratitudes:
+        process_gratitude_date(gratitude)
+    
     friends_count, gratitudes_count = await get_user_stats(user_id)
 
     return render_template('user_profile.html', user=user, gratitudes=gratitudes,
                            friends_count=friends_count, gratitudes_count=gratitudes_count,
                            is_friend=is_friend)
-
 
 @app.route('/search_users')
 async def search_users():
@@ -579,3 +584,5 @@ async def update_profile_description():
         return jsonify({'success': True}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
