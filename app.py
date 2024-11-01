@@ -136,6 +136,11 @@ async def register():
         general_error = 'Користувач з таким логіном або електронною поштою вже існує!'
         return render_template('register.html', general_error=general_error, errors=errors, form=request.form, CHAR_LIMITS=CHAR_LIMITS)
     
+
+    user_id = await get_user_id(login, password)  
+    session['user_id'] = user_id 
+
+
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
