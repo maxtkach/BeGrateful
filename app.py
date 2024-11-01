@@ -68,6 +68,9 @@ async def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 async def register():
+    if 'user_id' in session:
+            return redirect(url_for('index'))
+
     errors = {}
     general_error = None
 
@@ -137,6 +140,9 @@ async def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 async def login_view():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
+    
     errors = {}
     invalid_credentials = False 
 
