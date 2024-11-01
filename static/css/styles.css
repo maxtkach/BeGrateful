@@ -8,8 +8,17 @@ li {
   cursor: pointer;
 }
 
-img{
+img {
   object-fit: cover;
+}
+
+textarea {
+  resize: none;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
 }
 
 
@@ -53,6 +62,34 @@ img{
   font-display: swap;
 }
 
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#preloader video {
+  width: 100%;
+  height: auto;
+}
+
+#main-content {
+  display: none;
+  opacity: 0; /* Начальная прозрачность */
+  transition: opacity 1s ease-in-out; /* Плавный переход */
+}
+
+#main-content.visible {
+  opacity: 1; /* Полная непрозрачность */
+}
+
 .header {}
 
 .header__navigation {
@@ -62,6 +99,7 @@ img{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
 }
 
 .header__navigation-group {
@@ -165,12 +203,12 @@ img{
 }
 
 .gratitude__save-btn {
-  align-self: flex-start; 
+  align-self: flex-start;
 }
 
 .gratitude__public-option,
 .gratitude__friend-option,
-.gratitude__private-option  {
+.gratitude__private-option {
   align-self: center;
 }
 
@@ -261,7 +299,7 @@ img{
 
 
 .modal {
-  display: none; 
+  display: none;
   position: fixed;
   z-index: 100;
   left: 0;
@@ -275,7 +313,7 @@ img{
 
 .input_modal {
   border: 0px solid #ccc;
-  border-radius: 14px; 
+  border-radius: 14px;
   box-sizing: border-box;
   background-color: #EFF3FF;
   height: 56px;
@@ -288,8 +326,8 @@ img{
 
 
 .suggestions {
-  border: 1px solid #ccc; 
-  border-radius: 14px; 
+  border: 1px solid #ccc;
+  border-radius: 14px;
   max-height: 150px;
   overflow-y: auto;
   position: absolute;
@@ -297,12 +335,13 @@ img{
   z-index: 1000;
   width: 23%;
   box-shadow: 5px 6px 0px #C1CFFF;
-  font-family: 'Manrope', sans-serif; 
+  font-family: 'Manrope', sans-serif;
   font-size: 20px;
   padding: 0.5rem;
+  margin-top: 3%;
 }
 
-.h1_find_friends{
+.h1_find_friends {
   font-family: 'Manrope', sans-serif;
 }
 
@@ -312,7 +351,7 @@ img{
 }
 
 .suggestion-item:hover {
-  background-color: #f0f0f0; 
+  background-color: #f0f0f0;
 }
 
 .close {
@@ -336,13 +375,14 @@ img{
   border-radius: 22px;
   background-color: #fff;
 }
-.globel-title {
-}
+
+.globel-title {}
 
 .global_gratitude {
 
   margin-block: 20px;
 }
+
 .global__gratitude_content {
   display: flex;
   background-color: #EFF3FF;
@@ -351,24 +391,28 @@ img{
   box-shadow: 5px 6px #E8EDFF;
 
 }
+
 .global_gratitude_image {
   object-fit: contain;
 }
+
 .global__gratitude_title {
   margin-block: 2px;
 }
+
 .global__gratitude_description {
   margin-block: 2px;
 }
 
-.global__gratitude_text{
+.global__gratitude_text {
   margin-left: 10px;
 }
 
-.gratitude_image{
+.gratitude_image {
   width: 300px;
   height: 150px;
-  border-radius:11px;
+  border-bottom-left-radius: 11px;
+  border-bottom-right-radius: 11px;
 }
 
 
@@ -386,22 +430,39 @@ img{
   background-size: cover;
   background-color: #BDCCFF;
   background-position: center;
-  border-radius: 28px;
+  border-radius: 14px;
   color: white;
-  position: relative; 
+  position: relative;
   height: 96%;
   width: 94%;
-  box-sizing: border-box; 
-  margin-left: 27px; 
-  margin-top: 34px; 
-  margin-bottom: 7px; 
+  box-sizing: border-box;
+  margin-left: 27px;
+  margin-top: 34px;
+  margin-bottom: 7px;
+}
 
+.profile-top-elements {
+  display: flex;
+  flex-direction: row;
+  padding: 20px 30px 0px 30px;
+  gap: 50%;
+}
+
+.left-side,
+.profile-top-elements,
+.icon-hide-profile {
+  transition: all 0.3s ease;
+  /* Устанавливаем плавный переход на все свойства */
+}
+
+.icon-hide-profile.flipped {
+  transform: scaleX(-1);
+  /* Отзеркаливание при добавлении класса */
 }
 
 .profile-header-text {
   font-weight: 600;
   z-index: 2;
-  position: absolute;
   top: 20px;
   left: 20px;
   font-size: 36px;
@@ -410,10 +471,12 @@ img{
   color: #000;
 }
 
-.profile-header-name, .profile-header-username {
+.profile-header-name,
+.profile-header-username {
   text-align: center;
   margin: 0;
   color: #000;
+  margin-top: 15px;
 }
 
 .profile-header-name {
@@ -431,21 +494,21 @@ img{
 .profile-header-content {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; 
-  align-items: flex-start; 
-  height: 100%; 
-  margin: 0; 
-  padding-top: 100px; 
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 100%;
+  margin: 0;
+  padding-top: 100px;
   margin-left: 30px;
 }
 
-.profile_img_big{
+.profile_img_big {
   width: 130px;
   height: 130px;
-  border-radius:100px;
+  border-radius: 100px;
 }
 
-.profile-buttons{
+.profile-buttons {
   margin-top: 20px;
 }
 
@@ -454,14 +517,13 @@ img{
   font-size: 32px;
   margin: 0;
 }
+
 .profile-header-username {
   font-weight: 200;
 }
 
 
 .edit-profile {
-  padding-inline: 23px;
-  padding-block: 18px;
   border: none;
   border-radius: 15px;
   width: 240px;
@@ -472,7 +534,27 @@ img{
   font-size: 24px;
 }
 
-.edit-profile.passive{
+@keyframes flipIcon {
+  0% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+  }
+  50% {
+      transform: scale(0) rotate(90deg);
+      opacity: 0;
+  }
+  100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+  }
+}
+
+/* Применяем анимацию к иконке при смене */
+.toggle-password img.animating {
+  animation: flipIcon 0.4s ease-in-out;
+}
+
+.edit-profile.passive {
   background-color: #A9BCFF !important;
 }
 
@@ -487,7 +569,7 @@ img{
   font-size: 24px;
 }
 
-.h2-info-user{
+.h2-info-user {
   font-family: 'Manrope', sans-serif;
   padding: 10px;
   font-size: 32px;
@@ -498,6 +580,7 @@ img{
 .profile-daily-gratitude {
   font-family: 'Manrope', sans-serif;
   padding: 30px;
+
 }
 
 .daily-gratitude-title {
@@ -510,75 +593,96 @@ img{
 .daily-gratitude-description {
   font-family: 'Manrope', sans-serif;
   font-size: 24px;
-  padding: 4px;
-  margin: 7px;
+  padding: 20px;
+  margin: 0;
   color: white;
   background-color: #698BFF;
-  border-radius: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 
 }
 
-.profile-image{
+.profile-image {
   width: 44px;
   height: 44px;
   border-radius: 100px;
 }
 
 .left-side {
-  width: 30%; 
+  width: 30%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  overflow: hidden; 
+  overflow: hidden;
 }
-.left-side > * {
-  flex-shrink: 0; 
+
+.left-side>* {
+  flex-shrink: 0;
 }
 
 .right-side {
-  width: 70%; 
-  padding: 7px;
+  width: 70%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden; 
+  overflow: hidden;
+  gap: 7px;
 }
 
 .info-about-user {
-  height: 40%; 
-  background-color: #BDCCFF; 
+  height: 30%;
+  background-color: #BDCCFF;
   border-radius: 14px;
-  box-sizing: border-box; 
-  margin-right: 27px; 
-  margin-top: 27px; 
-  margin-bottom: 7px; 
+  box-sizing: border-box;
+  margin-right: 27px;
+  margin-top: 34px;
+  margin-left: 7px;
+  margin-bottom: 7px;
   font-family: 'Manrope';
   padding-left: 20px;
 
 }
 
 .profile-user-content {
-  height: 60%;
-  background-color: #BDCCFF; 
+  height: 64.5%;
+  background-color: #BDCCFF;
   box-sizing: border-box;
-  border-radius: 14px; 
-  margin-right: 27px; 
+  border-radius: 14px;
+  margin-right: 27px;
+  overflow-y: scroll;
+
+  margin-left: 7px;
 
 
 }
 
-.text-about-user{
+.profile-user-content::-webkit-scrollbar-track {
+  -webkit-box-shadow: none;
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+  background-color: #BDCCFF;
+}
+
+.profile-user-content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.profile-user-content::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: none;
+  background-color: #698BFF;
+}
+
+.text-about-user {
   font-family: 'Manrope';
   font-size: 24px;
   background-color: #698BFF;
   border-radius: 12px;
   color: white;
-  margin-left: 15px;
-  margin-right: 15px;
+  margin-right: 20px;
 
 }
 
-.form-edit{
+.form-edit {
   display: flex;
   padding-inline: 20px;
   padding-block: 20px;
@@ -586,26 +690,27 @@ img{
   gap: 20px;
 }
 
-.form-edit label{
+.form-edit label {
   font-size: 20px;
 }
 
-.text-about-user p{
+.text-about-user p {
   padding-inline: 20px;
-  padding-block: 10px;
+  padding-block: 15px;
+  margin: 0;
 }
 
 .modal-edit {
   font-family: 'Manrope';
-  display: none; 
-  position: fixed; 
-  z-index: 10; 
+  display: none;
+  position: fixed;
+  z-index: 10;
   padding-top: 20px;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0, 0, 0, 0.4); 
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 
@@ -618,7 +723,7 @@ img{
   width: 80%;
 }
 
-.input-modal-edit{
+.input-modal-edit {
   border: 0px solid #ccc;
   border-radius: 14px;
   box-sizing: border-box;
@@ -631,12 +736,26 @@ img{
   padding-left: 1rem;
 }
 
-.modal-edit-names{
+.input-modal-edit2 {
+  color: #686868;
+  border: 0px solid #b53f3f;
+  border-radius: 14px;
+  box-sizing: border-box;
+  background-color: #cfdbff;
+  height: 100px;
+  box-shadow: 5px 6px 0px #C1CFFF;
+  width: 400px;
+  font-size: 20px;
+  font-family: 'Manrope', sans-serif;
+  padding: 20px;
+}
+
+.modal-edit-names {
   display: flex;
   flex-direction: row;
 }
 
-.modal-edit-input{
+.modal-edit-input {
   display: flex;
   flex-direction: column;
   margin-right: 30px;
@@ -644,33 +763,34 @@ img{
 
 .submit-edit {
   background-color: #BDCCFF;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    padding: 15px 30px;
-    font-size: 18px;
-    width: 300px;
-    height: 70px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    margin-top: 20px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 15px 30px;
+  font-size: 18px;
+  width: 300px;
+  height: 70px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin-top: 20px;
 }
 
-.leave-btn{
+.leave-btn {
   background-color: white;
-    color: red;
-    border: solid 2px red;
-    border-radius: 12px;
-    cursor: pointer;
-    padding: 15px 30px;
-    font-size: 18px;
-    width: 300px;
-    height: 70px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1.5px;
+  color: red;
+  border: solid 2px red;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 15px 30px;
+  font-size: 15px;
+  width: 240px;
+  height: 70px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin-inline: 20px;
 }
 
 .toggle-buttons {
@@ -719,26 +839,50 @@ img{
   border: 1px solid #ddd;
   border-radius: 5px;
   transition: background-color 0.3s;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
-#calendar-title{
+#calendar-title {
   font-family: 'Manrope', sans-serif;
 }
 
 #calendar div:hover {
-  background-color: #e0f7fa; 
+  background-color: #e0f7fa;
 }
 
 #calendar div:active {
-  background-color: #b2ebf2; 
+  background-color: #b2ebf2;
 }
 
-.flashes{
+.flashes {
   font-family: 'Manrope', sans-serif;
 }
 
-#prev-month, #next-month {
+.flash-messages {
+  padding: 14px;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 14px;
+  width: 400px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  height: auto;
+
+}
+
+.message-success {
+  background-color: #beffc1;
+  color: rgb(5, 82, 37);
+}
+
+.message-error {
+  background-color: #ffbebe;
+  color: rgb(82, 5, 5);
+}
+
+#prev-month,
+#next-month {
   font-family: 'Manrope', sans-serif;
   font-weight: 800;
   background-color: #BDCCFF;
@@ -753,8 +897,9 @@ img{
   text-transform: uppercase;
 }
 
-#prev-month:hover, #next-month:hover {
-  background-color: #005f7f; 
+#prev-month:hover,
+#next-month:hover {
+  background-color: #005f7f;
 }
 
 h2 {
@@ -768,15 +913,16 @@ h2 {
   padding: 20px;
   border: 1px solid #888;
   width: 70%;
-  border-radius:28px;
+  border-radius: 28px;
 }
 
 
 .friends-search {
   display: flex;
 }
-.friends-searach__icon {
-}
+
+.friends-searach__icon {}
+
 .friends-search__input {
   font-family: 'Manrope', sans-serif;
   font-weight: 200;
@@ -792,19 +938,22 @@ h2 {
   align-items: center;
   font-family: 'Manrope', sans-serif;
 }
-.friends-list__number {
-}
+
+.friends-list__number {}
+
 .friends-list__friend {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 30px;
 }
+
 .friend_img {
   width: 80px;
   height: 80px;
-  border-radius:100%;
+  border-radius: 100%;
 }
+
 .friend_title {
   font-weight: 300;
   display: flex;
@@ -816,11 +965,13 @@ h2 {
   margin-bottom: 0px;
   margin-bottom: 0px;
 }
+
 .friend_title .username {
   margin-bottom: 0px;
   margin-top: 0px;
   color: #858585;
 }
+
 .delete-friend {
   background-color: transparent;
   border: 0;
@@ -835,7 +986,7 @@ h2 {
   padding: 0;
   margin: 0;
   justify-content: center;
-  width: 100%; 
+  width: 100%;
   text-align: center;
 }
 
@@ -856,38 +1007,46 @@ h2 {
 }
 
 .btn-add-friend {
-  margin: 30px; /* Отступ вокруг кнопки */
-  padding: 18px 23px; /* Вертикальные и горизонтальные отступы внутри кнопки */
-  border: none; /* Убирает стандартную рамку */
-  border-radius: 15px; /* Закругленные углы */
-  width: 240px; /* Ширина кнопки */
-  font-size: 24px; /* Размер шрифта */
-  font-family: 'Manrope', sans-serif; /* Шрифт */
-  font-weight: 600; /* Жирность шрифта */
-  color: #000; /* Цвет текста */
-  cursor: pointer; /* Указывает на то, что элемент кликабельный */
-  transition: background-color 0.3s ease; /* Плавный переход цвета фона */
-}
-
-/* Стили для кнопки "Додати в друзі" */
-.btn-add-friend:not(:disabled) {
-  background-color: #007bff; /* Цвет фона кнопки "Додати в друзі" */
+  /* Вертикальные и горизонтальные отступы внутри кнопки */
+  border: none;
+  /* Убирает стандартную рамку */
+  border-radius: 15px;
+  /* Закругленные углы */
+  width: 240px;
+  /* Ширина кнопки */
+  font-size: 24px;
+  /* Размер шрифта */
+  font-family: 'Manrope', sans-serif;
+  /* Шрифт */
+  font-weight: 600;
+  /* Жирность шрифта */
+  /* Цвет текста */
+  cursor: pointer;
+  /* Указывает на то, что элемент кликабельный */
+  transition: background-color 0.3s ease;
+  /* Плавный переход цвета фона */
 }
 
 .btn-add-friend:not(:disabled):hover {
-  background-color: #0056b3; /* Темный цвет при наведении */
+  background-color: #0056b3;
+  /* Темный цвет при наведении */
 }
 
 .btn-add-friend:not(:disabled):active {
-  background-color: #004085; /* Более темный цвет при нажатии */
+  background-color: #004085;
+  /* Более темный цвет при нажатии */
 }
 
 /* Стили для кнопки "Вже друзі" */
 .btn-add-friend:disabled {
-  background-color: #F0F0F0; /* Цвет фона кнопки "Вже друзі" */
-  color: #000; /* Цвет текста */
-  cursor: not-allowed; /* Указывает, что кнопка недоступна */
-  opacity: 0.65; /* Полупрозрачность для отключенной кнопки */
+  background-color: #F0F0F0;
+  /* Цвет фона кнопки "Вже друзі" */
+  color: #000;
+  /* Цвет текста */
+  cursor: not-allowed;
+  /* Указывает, что кнопка недоступна */
+  opacity: 0.65;
+  /* Полупрозрачность для отключенной кнопки */
 }
 
 #toggle-container {
@@ -948,67 +1107,95 @@ h2 {
 
 .global__gratitude_text {
   display: flex;
-  flex-direction: column; /* Размещаем элементы в колонку */
-  align-items: flex-start; /* Выровнять элементы в начале по горизонтали */
-  position: relative; /* Для относительного позиционирования */
+  flex-direction: column;
+  /* Размещаем элементы в колонку */
+  align-items: flex-start;
+  /* Выровнять элементы в начале по горизонтали */
+  position: relative;
+  /* Для относительного позиционирования */
 }
 
 .gratitude_date {
-  text-align: right; /* Выравнивание текста по правому краю */
-  color: #888; /* Цвет текста, можно изменить по желанию */
-  cursor: pointer; /* Указатель при наведении */
-  margin-top: 10px; /* Отступ сверху */
-  position: relative; /* Необходимо для позиционирования tooltip */
+  text-align: right;
+  /* Выравнивание текста по правому краю */
+  color: #888;
+  /* Цвет текста, можно изменить по желанию */
+  cursor: pointer;
+  /* Указатель при наведении */
+  margin-top: 10px;
+  /* Отступ сверху */
+  position: relative;
+  /* Необходимо для позиционирования tooltip */
 }
 
 .gratitude_date:hover::after {
-  content: attr(data-full-date); /* Показать точную дату при наведении */
+  content: attr(data-full-date);
+  /* Показать точную дату при наведении */
   position: absolute;
   left: 0;
-  top: 100%; /* Позиционирование ниже текста */
-  background: rgba(0, 0, 0, 0.8); /* Фоновый цвет tooltip */
-  color: #fff; /* Цвет текста в tooltip */
+  top: 100%;
+  /* Позиционирование ниже текста */
+  background: rgba(0, 0, 0, 0.8);
+  /* Фоновый цвет tooltip */
+  color: #fff;
+  /* Цвет текста в tooltip */
   padding: 5px;
   border-radius: 4px;
-  white-space: nowrap; /* Запрет на перенос строк */
-  z-index: 10; /* Убедитесь, что tooltip отображается поверх других элементов */
-  opacity: 0; /* Начальная прозрачность */
-  transition: opacity 0.3s ease 0.5s; /* Плавное появление и задержка */
+  white-space: nowrap;
+  /* Запрет на перенос строк */
+  z-index: 10;
+  /* Убедитесь, что tooltip отображается поверх других элементов */
+  opacity: 0;
+  /* Начальная прозрачность */
+  transition: opacity 0.3s ease 0.5s;
+  /* Плавное появление и задержка */
 }
 
 .gratitude_date:hover::after {
-  opacity: 1; 
+  opacity: 1;
 }
+
 .profile-description-container {
-  margin-top: 20px; /* Отступ сверху */
-  padding: 15px; /* Внутренние отступы */
-  background-color: #F8F8F8; /* Светлый фон для блока описания */
-  border-radius: 10px; /* Закругление углов */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень */
+  margin-top: 10px;
+  /* Отступ сверху */
+  border-radius: 10px;
+  /* Закругление углов */
 }
 
 .profile-description {
-  font-size: 18px; /* Размер текста описания */
-  color: #333; /* Цвет текста */
-  cursor: pointer; /* Курсор в виде руки при наведении */
-  transition: color 0.3s; /* Плавный переход цвета */
+  font-size: 21px;
+  color: #1b1b1b;
+  font-weight: 300;
+  cursor: pointer;
+  transition: color 0.3s;
+  margin: 0px;
 }
 
 .profile-description:hover {
-  color: #698BFF; /* Цвет при наведении */
+  color: #698BFF;
+  /* Цвет при наведении */
 }
 
 .submit-edit {
-  background-color: #698BFF; /* Цвет кнопки */
-  color: white; /* Цвет текста кнопки */
-  border: none; /* Без границы */
-  padding: 10px 15px; /* Внутренние отступы кнопки */
-  border-radius: 5px; /* Закругление углов кнопки */
-  cursor: pointer; /* Курсор в виде руки */
-  margin-top: 10px; /* Отступ сверху */
-  transition: background-color 0.3s; /* Плавный переход для фона */
+  background-color: #698BFF;
+  /* Цвет кнопки */
+  color: white;
+  /* Цвет текста кнопки */
+  border: none;
+  /* Без границы */
+  padding: 10px 15px;
+  /* Внутренние отступы кнопки */
+  border-radius: 5px;
+  /* Закругление углов кнопки */
+  cursor: pointer;
+  /* Курсор в виде руки */
+  margin-top: 10px;
+  /* Отступ сверху */
+  transition: background-color 0.3s;
+  /* Плавный переход для фона */
 }
 
 .submit-edit:hover {
-  background-color: #4A6ED9; /* Цвет кнопки при наведении */
+  background-color: #4A6ED9;
+  /* Цвет кнопки при наведении */
 }

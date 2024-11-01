@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.style.display = 'none';
     }
 
+
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    fetch('/set_timezone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timezone: timezone })
+    });
+    
     // Закрытие модальных окон при клике вне их содержимого
     window.addEventListener('click', function(event) {
         if (event.target === friendsModal) {
@@ -84,10 +93,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Функция для переключения видимости пароля
-function togglePassword(fieldId) {
-    const passwordField = document.getElementById(fieldId);
-    passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+
+function togglePassword(clickedIcon) {
+    const passwordFields = [document.getElementById('password'), document.getElementById('confirm_password')];
+    const isPasswordVisible = passwordFields[0].type === 'text';
+    const icons = document.querySelectorAll('.toggle-password img');
+
+    // Переключаем тип обоих полей
+    passwordFields.forEach(field => {
+        field.type = isPasswordVisible ? 'password' : 'text';
+    });
+
+    // Добавляем анимацию к иконкам
+    icons.forEach(icon => {
+        icon.classList.add('animating');
+        
+        // Меняем иконку после небольшого тайм-аута для эффекта исчезновения
+        setTimeout(() => {
+            icon.src = isPasswordVisible ? "/static/icons/eye-icon.svg" : "/static/icons/eye-closed.svg";
+        }, 200); // Половина продолжительности анимации
+
+        // Убираем класс анимации после её завершения
+        icon.addEventListener('animationend', () => {
+            icon.classList.remove('animating');
+        }, { once: true });
+    });
 }
 
 function deleteGratitude(gratitudeId) {
@@ -136,3 +166,29 @@ function sendUpdatedValueToServer(field, newValue) {
         alert('Системна помилка. Спробуйте ще раз пізніше.');
     });
 }
+
+
+document.querySelector('.icon-hide-profile').addEventListener('click', function() {
+    const leftSide = document.querySelector('.left-side');
+    const profileTopElements = document.querySelector('.profile-top-elements');
+    const icon = document.querySelector('.icon-hide-profile');
+
+    if (icon.classList.contains('flipped')) {
+        // Возвращаем стили к исходному состоянию
+        leftSide.style.width = '30%'; // Вернуть к исходному размеру
+        profileTopElements.style.gap = '50%'; // Устанавливаем нужный начальный gap
+        icon.style.transform = 'scaleX(1)'; // Вернуть иконку в начальное положение
+        icon.classList.remove('flipped');
+    } else {
+        // Изменяем стили
+        leftSide.style.width = '19%';
+        profileTopElements.style.gap = '20%';
+        icon.style.transform = 'scaleX(-1)';
+        icon.classList.add('flipped');
+    }
+});
+
+
+
+
+

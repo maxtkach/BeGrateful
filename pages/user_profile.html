@@ -7,7 +7,16 @@
 
     <div class="left-side">
         <div class="profile-header">
-            <h1 class="profile-header-text">Профіль</h1>
+            <div class="profile-top-elements">
+                <h1 class="profile-header-text">Профіль</h1>
+                <div class="icon-hide-profile">
+                    <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M39.8125 6.125H42.875V42.875H39.8125V6.125ZM17.4777 31.5223L11.9866 26.0312H33.6875V22.9688H11.9866L17.4777 17.4777L15.3125 15.3125L6.125 24.5L15.3125 33.6875L17.4777 31.5223Z"
+                            fill="black" />
+                    </svg>
+                </div>
+            </div>
             <div class="profile-header-content">
                 <img src="{{ url_for('static', filename='imagesforcss/profile-image.jpg') }}" alt="" class="profile_img_big">
                 <h2 class="profile-header-name">{{ user.first_name }} {{ user.last_name }}</h2>
@@ -45,18 +54,20 @@
         <div class="profile-user-content">
             <div class="profile-daily-gratitude">
                 <h2 class="daily-gratitude-title">Подяки дня</h2>
-                {% if todays_gratitudes and todays_gratitudes|length > 0 %}
-                    {% for gratitude in todays_gratitudes %}
+                {% if gratitudes and gratitudes|length > 0 %}
+                    {% for gratitude in gratitudes %}
                         <p class="daily-gratitude-description">{{ gratitude.content }}</p>
                         {% if gratitude.image_url %}
                             <img class="gratitude_image" src="{{ url_for('static', filename=gratitude.image_url) }}" alt="Подяка дня" />
                         {% endif %}
+                        {% include '_gratitude_date.html' %}
                     {% endfor %}
                 {% else %}
-                    <p class="daily-gratitude-description">Немає сьогоднішніх подяк.</p>
+                    <p class="daily-gratitude-description">Немає подяк, доступних для всіх.</p>
                 {% endif %}
             </div>
         </div>
+
     </div>
 
 </section>
